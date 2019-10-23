@@ -16,12 +16,12 @@ End Sub
 Sub acdc_pivot()
     Dim PTCache As PivotCache
     Dim PT As PivotTable
-    Dim cnt As Integer, data As Integer, log_name As String
+    Dim cnt As Integer, log_name As String
     Dim data_name As String
     Dim comment_name As String
 
     cnt = 1
-    data = Sheets.Count
+
     'Type in the sheet name under analysis
     log_name = Inputbox("In AC/DC analysis, please type in the sheet name for creating pivot chart." & vbCrlf & "Or, type in 'end' to leave.")
     Do While Sheets(cnt).Name <> log_name
@@ -30,7 +30,7 @@ Sub acdc_pivot()
         End If
 
         cnt = cnt + 1
-        If cnt = data Then
+        If cnt > Sheets.Count Then
             cnt = 1
             log_name = Inputbox("In AC/DC analysis, please type in the sheet name for creating pivot chart." & vbCrlf & "Or, type in 'end' to leave.")
         End If
@@ -101,11 +101,11 @@ End Sub
 Sub Other_pivot()
     Dim PTCache As PivotCache
     Dim PT As PivotTable
-    Dim cnt As Integer, data As Integer, col As Integer
+    Dim cnt As Integer, col As Integer
     Dim log_name As String, row_name As String, column_name As String, data_name As String
 
     cnt = 1
-    data = Sheets.Count
+
     'Type in the sheet name under analysis
     log_name = Inputbox("In analysis, please type in the sheet name for creating pivot chart." & vbCrlf & "Or, type in 'end' to leave.")
     Do While Sheets(cnt).Name <> log_name
@@ -114,7 +114,7 @@ Sub Other_pivot()
         End If
 
         cnt = cnt + 1
-        If cnt = data Then
+        If cnt > Sheets.Count Then
             cnt = 1
             log_name = Inputbox("In analysis, please type in the sheet name for creating pivot chart." & vbCrlf & "Or, type in 'end' to leave.")
         End If
@@ -214,11 +214,11 @@ End Sub
 Sub acdc_thermal_pivot()
     Dim PTCache As PivotCache
     Dim PT As PivotTable
-    Dim cnt As Integer, data As Integer, log_name As String
+    Dim cnt As Integer, log_name As String
     Dim comment_name As String, data_name As String, load_current As String
 
     cnt = 1
-    data = Sheets.Count
+
     'Type in the sheet name under analysis
     log_name = Inputbox("In AC/DC THERMAL analysis, please type in the sheet name for creating pivot chart." & vbCrlf & "Or, type in 'end' to leave.")
     Do While Sheets(cnt).Name <> log_name
@@ -227,7 +227,7 @@ Sub acdc_thermal_pivot()
         End If
 
         cnt = cnt + 1
-        If cnt = data Then
+        If cnt > Sheets.Count Then
             cnt = 1
             log_name = Inputbox("In AC/DC THERMAL analysis, please type in the sheet name for creating pivot chart." & vbCrlf & "Or, type in 'end' to leave.")
         End If
