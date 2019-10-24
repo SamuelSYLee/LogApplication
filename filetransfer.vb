@@ -3,6 +3,10 @@ Sub txtToxls()
     Set fd = Application.FileDialog(msoFileDialogFilePicker)
     Dim cnt As Integer, i As Integer
 
+    'Delete all existing data
+    Cells.Select
+    Selection.Delete
+
     'Set Application.FileDialog GUI
     With fd
         .AllowMultiSelect = False
