@@ -55,10 +55,10 @@ Sub acdc_pivot()
 
     If  log_name <> "end" And data_name <> "end" Then
         Set PTCache = ThisWorkbook.PivotCaches.Add _
-        (SourceType:=xlDatabase, SourceData := Sheets(log_name).Range("A1").CurrentRegion.Address)
-        Set PT = PTCache.CreatePivotTable (TableDestination:="", TableName:="acdc_pivot")
+        (SourceType := xlDatabase, SourceData := Sheets(log_name).Range("A1").CurrentRegion.Address)
+        Set PT = PTCache.CreatePivotTable (TableDestination := "", TableName:="acdc_pivot")
 
-        'Set column in the new piivot chart
+        'Set column in the new pivot chart
         With PT
             'Set [comment] as the filter
             .PivotFields("comment").Orientation = xlPageField
@@ -99,10 +99,12 @@ Sub acdc_pivot()
 End Sub
 
 Sub Other_pivot()
+    On Error GoTo ErrorHandler 
     Dim PTCache As PivotCache
     Dim PT As PivotTable
     Dim cnt As Integer, col As Integer
     Dim log_name As String, row_name As String, column_name As String, data_name As String
+    Dim comment_name As String
 
     cnt = 1
 
@@ -139,9 +141,9 @@ Sub Other_pivot()
 
     'Type in the column label for the chart
     If  log_name <> "end" Then
-        col = Inputbox("In analysis, please type in the load number for the chart." & vbCrlf & "Number range is from 2 to 5.")
+        col = Inputbox(row_name & " is selected!" & vbCrlf & "In analysis, please type in the load number for the chart." & vbCrlf & "Number range is from 2 to 5.")
         Do While col < 2 Or col > 5
-            col = Inputbox("In analysis, please type in the load number for the chart." & vbCrlf & "Number range is from 2 to 5.")
+            col = Inputbox(row_name & " is selected!" & vbCrlf & "In analysis, please type in the load number for the chart." & vbCrlf & "Number range is from 2 to 5.")
         Loop
              
         Select Case col
@@ -158,8 +160,8 @@ Sub Other_pivot()
 
     'Type in the data for the chart
     If  log_name <> "end" Then
-        data_name = Inputbox(column_name & " is selected!" & "In analysis, please type in the analysis data for the chart. e.g. Efficiency: L2/DC2_Eff" _
-        & vbCrlf & "Or, type in 'end' to leave.")
+        data_name = Inputbox(row_name & " & " & column_name & " are selected!" & vbCrlf & "In analysis, please type in the analysis data for the chart. " & _
+        "e.g. Efficiency: L2/DC2_Eff" & vbCrlf & "Or, type in 'end' to leave.")
 
         cnt = 1
         Do While Sheets(log_name).Cells(1, cnt).Value <> data_name
@@ -169,8 +171,8 @@ Sub Other_pivot()
 
             cnt = cnt + 1
             If Sheets(log_name).Cells(1, cnt).Value = "" Then
-                data_name = Inputbox(column_name & " is selected!" & "In analysis, please type in the analysis data for the chart. e.g. Efficiency: L2/DC2_Eff" _
-                & vbCrlf & "Or, type in 'end' to leave.")
+                data_name = Inputbox(row_name & " & " & column_name & " are selected!" & vbCrlf & "In analysis, please type in the analysis data for the chart. " & _
+                "e.g. Efficiency: L2/DC2_Eff" & vbCrlf & "Or, type in 'end' to leave.")
 
                 cnt = 1
             End If
@@ -179,13 +181,64 @@ Sub Other_pivot()
 
     If  log_name <> "end" And row_name <> "end" And data_name <> "end" Then
         Set PTCache = ThisWorkbook.PivotCaches.Add _
-        (SourceType:=xlDatabase, SourceData := Sheets(log_name).Range("A1").CurrentRegion.Address)
-        Set PT = PTCache.CreatePivotTable (TableDestination:="", TableName:="pivot")
+        (SourceType := xlDatabase, SourceData := Sheets(log_name).Range("A1").CurrentRegion.Address)
+        Set PT = PTCache.CreatePivotTable (TableDestination := "", TableName := "pivot")
         
-        'Set column in the new piivot chart
+        'Set column in the new pivot chart
         With PT
             'Set [comment] as the filter
             .PivotFields("comment").Orientation = xlPageField
+            With .PivotFields("comment")
+                For cnt = 1 To .PivotItems.Count 
+                    comment_name = .PivotItems(cnt).Name
+                    Select Case col
+                    Case 2  'MAIN O/P Current
+                        Select Case row_name
+                        Case "DC1Voltage"  'MAIN from EXT
+                            If comment_name <> "MAIN from EXT" Then
+                                .PivotItems(comment_name).Visible = False
+                            End If
+                        Case "DC2Voltage"  'MAIN from INT
+                            If comment_name <> "MAIN from INT" Then
+                                .PivotItems(comment_name).Visible = False
+                            End If
+                        End Select
+                    Case 3  'PRINTER O/P Current
+                        Select Case row_name
+                        Case "DC1Voltage"  'PRINTER from EXT
+                            If comment_name <> "PRINTER from EXT" Then
+                                .PivotItems(comment_name).Visible = False
+                            End If
+                        Case "DC2Voltage"  'PRINTER from INT
+                            If comment_name <> "PRINTER from INT" Then
+                                .PivotItems(comment_name).Visible = False
+                            End If
+                        End Select                        
+                    Case 4  '12V+ O/P Current
+                        Select Case row_name
+                        Case "DC1Voltage"  '12V+ from EXT
+                            If comment_name <> "12V+ from EXT" Then
+                                .PivotItems(comment_name).Visible = False
+                            End If
+                        Case "DC2Voltage"  '12V+ from INT
+                            If comment_name <> "12V+ from INT" Then
+                                .PivotItems(comment_name).Visible = False
+                            End If
+                        End Select                          
+                    Case 5  '24V+ O/P Current
+                        Select Case row_name
+                        Case "DC1Voltage"  '24V+ from EXT
+                            If comment_name <> "24V+ from EXT" Then
+                                .PivotItems(comment_name).Visible = False
+                            End If
+                        Case "DC2Voltage"  '24V+ from INT
+                            If comment_name <> "24V+ from INT" Then
+                                .PivotItems(comment_name).Visible = False
+                            End If
+                        End Select                         
+                    End Select
+                Next cnt
+            End With
             'Set the row label
             .PivotFields(row_name).Orientation = xlColumnField
             'Set the column label
@@ -209,6 +262,15 @@ Sub Other_pivot()
     Else
         Msgbox "Abort the pivot chart generating!"
     End If
+
+    Exit Sub
+
+'Error resolve for the comment not found in the path
+ErrorHandler:
+        MsgBox "Error " & Err.Number & "：" & Err.Description & vbCrlf & _
+        "There is no comment (" & column_name & " from " & row_name & ") in the log!"
+        Exit Sub
+    Resume  
 End Sub
 
 Sub acdc_thermal_pivot()
@@ -235,12 +297,12 @@ Sub acdc_thermal_pivot()
 
     If  log_name <> "end" And data_name <> "end" Then
         Set PTCache = ThisWorkbook.PivotCaches.Add _
-        (SourceType:=xlDatabase, SourceData := Sheets(log_name).Range("A1").CurrentRegion.Address)
-        Set PT = PTCache.CreatePivotTable (TableDestination:="", TableName:="acdc_thermal_pivot")
+        (SourceType := xlDatabase, SourceData := Sheets(log_name).Range("A1").CurrentRegion.Address)
+        Set PT = PTCache.CreatePivotTable (TableDestination := "", TableName:="acdc_thermal_pivot")
 
         MsgBox "Begin to generate the pivot chart. Please wait!"
 
-        'Set column in the new piivot chart
+        'Set column in the new pivot chart
         With PT
             'Set [comment] as the filter
             .PivotFields("comment").Orientation = xlPageField
