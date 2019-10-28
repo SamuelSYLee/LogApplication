@@ -102,7 +102,7 @@ Sub Other_pivot()
     On Error GoTo ErrorHandler 
     Dim PTCache As PivotCache
     Dim PT As PivotTable
-    Dim cnt As Integer, col As Integer
+    Dim cnt As Integer, row As Integer, col As Integer
     Dim log_name As String, row_name As String, column_name As String, data_name As String
     Dim comment_name As String
 
@@ -124,19 +124,19 @@ Sub Other_pivot()
 
     'Type in the row label for the chart
     If  log_name <> "end" Then
-        row_name = Inputbox("In analysis, please type in the row label for the chart." & vbCrlf & "Or, type in 'end' to leave.")
-        cnt = 1
-        Do While Sheets(log_name).Cells(1, cnt).Value <> row_name
-            If row_name = "end" Then
-                Exit Do
-            End If
-
-            cnt = cnt + 1
-            If Sheets(log_name).Cells(1, cnt).Value = "" Then
-                row_name = Inputbox("In analysis, please type in the row label for the chart." & vbCrlf & "Or, type in 'end' to leave.")
-                cnt = 1
-            End If
+        row = Inputbox("In analysis, please type in the Battery Input type for the chart." & vbCrlf & "1 for DC1Voltage" & vbCrlf & _
+        "2 for DC2Voltage")
+        Do While row < 1 Or row > 2
+            row = Inputbox("In analysis, please type in the Battery Input type for the chart." & vbCrlf & "1 for DC1Voltage" & vbCrlf & _
+            "2 for DC2Voltage")
         Loop
+             
+        Select Case row
+        Case 1
+            row_name = "DC1Voltage"
+        Case 2
+            row_name = "DC2Voltage"
+        End Select
     End If
 
     'Type in the column label for the chart
