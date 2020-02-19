@@ -1,7 +1,7 @@
 Sub txtToxls()
     Dim fd As FileDialog
     Set fd = Application.FileDialog(msoFileDialogFilePicker)
-    Dim cnt As Integer, i As Integer
+    Dim cnt As Long, i As Integer
 
     'Delete all existing data
     Cells.Select
@@ -39,7 +39,7 @@ Sub txtToxls()
         Range("A1").Select
         Range(Selection, Selection.End(xlDown)).Select
         'Seperate each data by semicolon
-        Selection.TextToColumns Semicolon := True
+        Selection.TextToColumns DataType := xlDelimited, Semicolon := True
 
         Msgbox fd.SelectedItems(1) & vbCrlf & "has already been transfered!"
     Else
