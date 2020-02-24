@@ -4,12 +4,12 @@ Sub ReleaseAllData()
 End Sub
 
 Sub SelectThermalPivot_ACDC_Data()
-    Worksheets(1).PivotTables(1).PivotSelect "Load1Current" ,xlDataOnly
+    ActiveSheet.PivotTables(1).PivotSelect "Load1Current" ,xlDataOnly
     Selection.Copy
 End Sub
 
 Sub SelectThermalPivot_Column()
-    Worksheets(1).PivotTables(1).PivotSelect "Minutes" ,xlLabelOnly
+    ActiveSheet.PivotTables(1).PivotSelect "Minutes" ,xlLabelOnly
     Selection.Copy
 End Sub
 
@@ -124,11 +124,11 @@ Sub Other_pivot()
 
     'Type in the row label for the chart
     If  log_name <> "end" Then
-        row = Inputbox("In analysis, please type in the Battery Input type for the chart." & vbCrlf & "1 for DC1Voltage" & vbCrlf & _
-        "2 for DC2Voltage")
+        row = Inputbox("In analysis, please type in the Battery Input type for the chart." & vbCrlf & "1 for DC1Voltage (EXT Battery Input)" & vbCrlf & _
+        "2 for DC2Voltage (INT Battery Input)")
         Do While row < 1 Or row > 2
-            row = Inputbox("In analysis, please type in the Battery Input type for the chart." & vbCrlf & "1 for DC1Voltage" & vbCrlf & _
-            "2 for DC2Voltage")
+            row = Inputbox("In analysis, please type in the Battery Input type for the chart." & vbCrlf & "1 for DC1Voltage (EXT Battery Input)" & vbCrlf & _
+            "2 for DC2Voltage (INT Battery Input)")
         Loop
              
         Select Case row
@@ -267,7 +267,7 @@ Sub Other_pivot()
 
 'Error resolve for the comment not found in the path
 ErrorHandler:
-        MsgBox "Error " & Err.Number & "：" & Err.Description & vbCrlf & _
+        MsgBox "Error " & Err.Number & ":" & Err.Description & vbCrlf & _
         "There is no comment (" & column_name & " from " & row_name & ") in the log!"
         Exit Sub
     Resume  
