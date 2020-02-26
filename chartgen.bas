@@ -52,19 +52,36 @@ Sub Create_ACDC_Chart()
         Rows(1).Delete
     Next
 
-    ActiveSheet.Range("A1:CW11").Select
-    ActiveSheet.Shapes.AddChart.Select
-    ActiveChart.ChartType = xlXYScatterSmooth
-    ActiveChart.SetSourceData Source := ActiveSheet.Range("A1:CW11"), PlotBy := xlColumns
-    ActiveChart.Legend.Position = xlLegendPositionTop
-
     cat = Inputbox("Please type in the category (1 or 2) of y-axis, refer to the following description:" & vbCrlf & "1. Voltage" & vbCrlf & "2. Efficiency")
+
+    'Delete abnormal data
+    For i = 2 To 1 + I_cnt Step 1
+        For j = 2 To 1 + Vac_cnt Step 1
+            Select Case cat
+            Case 1
+                If Cells(i, j).Value <= 5 Then
+                    Cells(i, j) = ""
+                End If
+            Case 2
+                If Cells(i, j).Value <= 0.3 Then
+                    Cells(i, j) = ""
+                End If
+            End Select
+        Next
+    Next
+
+    'Create XYScatter chart
+    ActiveSheet.Range(Cells(1, 1), Cells(1 + I_cnt, 1 + Vac_cnt)).Select
+    ActiveSheet.Shapes.AddChart.Select
+    ActiveChart.ChartType = xlXYScatterLines
+    ActiveChart.SetSourceData Source := ActiveSheet.Range(Cells(1, 1), Cells(1 + I_cnt, 1 + Vac_cnt)), PlotBy := xlColumns
+    ActiveChart.Legend.Position = xlLegendPositionTop
 
     With ActiveChart
         .Axes(xlCategory, xlPrimary).HasTitle = True
         .Axes(xlCategory, xlPrimary).AxisTitle.Characters.Text = "Curret Load (A)"
-        .Axes(xlCategory).MinimumScale = 1
-        .Axes(xlCategory).MaximumScale = 10
+        .Axes(xlCategory).MinimumScale = Cells(2, 1).Value
+        .Axes(xlCategory).MaximumScale = Cells(1 + I_cnt, 1).Value
         .Axes(xlCategory).HasMajorGridlines = True
         .Axes(xlValue, xlPrimary).HasTitle = True
         .Axes(xlValue).HasMajorGridlines = True
@@ -83,7 +100,7 @@ Sub Create_ACDC_Chart()
 
     'Set efficiency data to 0.00%
     If cat = 2 Then
-        Range("B2:CW11").Select
+        Range(Cells(2, 2), Cells(1 + I_cnt, 1 + Vac_cnt)).Select
         Selection.Style = "Percent"
         Selection.NumberFormat = "0.00%"
     End If
