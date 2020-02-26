@@ -150,3 +150,293 @@ Sub Create_ACDC_Chart()
     'Delete chart border
     ActiveSheet.Shapes(ActiveChart.Parent.Name).Line.Visible = msoFalse  
 End Sub
+
+Sub Create_Other_Chart()
+    'Only for generating voltage/current and efficiency/current chart in MAIN/PRINTER/OTHER/12V/24V application
+    Dim V_cnt As Integer, I_cnt As Integer
+    Dim cat As String
+
+    V_cnt = 0
+    I_cnt = 0
+    
+    'Select data in pivot chart
+    Do While IsNumeric(Cells(4, 2 + V_cnt)) = True
+        V_cnt = V_cnt + 1
+    Loop
+
+    Do While IsNumeric(Cells(5 + I_cnt, 1)) = True
+        I_cnt = I_cnt + 1
+    Loop
+
+    ActiveSheet.Range(Cells(4, 1), Cells(4 + I_cnt, 1 + V_cnt)).Select
+    Selection.Copy
+
+    'Create new sheet, and paste on selected data
+    Sheets.Add
+    ActiveSheet.Paste
+
+    'Combine row label
+    Rows("2").Insert
+    For i = 1 To V_cnt Step 1
+		Cells(2, i + 1).Value = Cells(1, i + 1) & "V"
+	Next
+    Cells(2, 1).Value = Cells(1, 1) & "(A)"
+    Rows(1).Delete
+
+    cat = Inputbox("Please type in the category (1 or 2) of y-axis, refer to the following description:" & vbCrlf & "1. Voltage" & vbCrlf & "2. Efficiency")
+
+    'Delete abnormal data
+    For i = 2 To 1 + I_cnt Step 1
+        For j = 2 To 1 + V_cnt Step 1
+            Select Case cat
+            Case 2
+                If Cells(i, j).Value <= 0.3 Then
+                    Cells(i, j) = ""
+                End If
+            End Select
+        Next
+    Next
+
+    'Create XYScatter chart
+    ActiveSheet.Range(Cells(1, 1), Cells(1 + I_cnt, 1 + V_cnt)).Select
+    ActiveSheet.Shapes.AddChart.Select
+    ActiveChart.ChartType = xlXYScatterLines
+    ActiveChart.SetSourceData Source := ActiveSheet.Range(Cells(1, 1), Cells(1 + I_cnt, 1 + V_cnt)), PlotBy := xlColumns
+    ActiveChart.Legend.Position = xlLegendPositionTop
+
+    With ActiveChart
+        .Axes(xlCategory, xlPrimary).HasTitle = True
+        .Axes(xlCategory, xlPrimary).AxisTitle.Characters.Text = "Curret Load (A)"
+        .Axes(xlCategory).MinimumScale = Cells(2, 1).Value
+        .Axes(xlCategory).MaximumScale = Cells(1 + I_cnt, 1).Value
+        .Axes(xlCategory).HasMajorGridlines = True
+        .Axes(xlValue, xlPrimary).HasTitle = True
+        .Axes(xlValue).HasMajorGridlines = True
+
+        Select Case cat
+        Case 1
+            .Axes(xlValue, xlPrimary).AxisTitle.Characters.Text = "Voltage (V)"
+            .Axes(xlValue).MinimumScale = 0
+            .Axes(xlValue).MaximumScale = 18
+        Case 2
+            .Axes(xlValue, xlPrimary).AxisTitle.Characters.Text = "Efficiency (%)"
+            .Axes(xlValue).MinimumScale = 0.81
+            .Axes(xlValue).MaximumScale = 0.97
+        End Select
+    End With
+
+    'Set efficiency data to 0.00%
+    If cat = 2 Then
+        Range(Cells(2, 2), Cells(1 + I_cnt, 1 + V_cnt)).Select
+        Selection.Style = "Percent"
+        Selection.NumberFormat = "0.00%"
+    End If
+
+    'Modify chart size and color of gridline
+    With ActiveSheet.ChartObjects(1)
+        .Activate
+        .Height = 950
+        .Width = 900
+    End With
+    ActiveChart.Axes(xlCategory).MajorGridlines.Select
+    With Selection.Format.Line
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(217, 217, 217)
+        .Transparency = 0
+    End With
+    ActiveChart.Axes(xlValue).MajorGridlines.Select
+    With Selection.Format.Line
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(217, 217, 217)
+        .Transparency = 0
+    End With
+    ActiveChart.Axes(xlCategory).Select
+    With Selection.Format.Line
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(217, 217, 217)
+        .Transparency = 0
+    End With
+    ActiveChart.Axes(xlValue).Select
+    With Selection.Format.Line
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(217, 217, 217)
+        .Transparency = 0
+    End With
+
+    'Modify all font to 18
+    ActiveChart.Legend.Select
+    Selection.Format.TextFrame2.TextRange.font.Size = 18
+    ActiveChart.Axes(xlValue).Select
+    Selection.TickLabels.font.Size = 18
+    ActiveChart.Axes(xlCategory).Select
+    Selection.TickLabels.font.Size = 18
+    ActiveChart.Axes(xlValue).AxisTitle.Select
+    Selection.Format.TextFrame2.TextRange.font.Size = 18
+    ActiveChart.Axes(xlCategory).AxisTitle.Select
+    Selection.Format.TextFrame2.TextRange.font.Size = 18
+    'Delete chart border
+    ActiveSheet.Shapes(ActiveChart.Parent.Name).Line.Visible = msoFalse  
+End Sub
+
+Sub Create_Other_Chart_wData()
+    'Only for generating voltage/current and efficiency/current chart with DATA in MAIN/PRINTER/OTHER/12V/24V application
+    Dim V_cnt As Integer, I_cnt As Integer
+    Dim cat As String
+
+    V_cnt = 0
+    I_cnt = 0
+    
+    'Select data in pivot chart
+    Do While IsNumeric(Cells(4, 2 + V_cnt)) = True
+        V_cnt = V_cnt + 1
+    Loop
+
+    Do While IsNumeric(Cells(5 + I_cnt, 1)) = True
+        I_cnt = I_cnt + 1
+    Loop
+
+    ActiveSheet.Range(Cells(4, 1), Cells(4 + I_cnt, 1 + V_cnt)).Select
+    Selection.Copy
+
+    'Create new sheet, and paste on selected data
+    Sheets.Add
+    ActiveSheet.Paste
+
+    'Combine row label
+    Rows("2").Insert
+    For i = 1 To V_cnt Step 1
+		Cells(2, i + 1).Value = Cells(1, i + 1) & "V"
+	Next
+    Cells(2, 1).Value = Cells(1, 1) & "(A)"
+    Rows(1).Delete
+
+    cat = Inputbox("Please type in the category (1 or 2) of y-axis, refer to the following description:" & vbCrlf & "1. Voltage" & vbCrlf & "2. Efficiency")
+
+    'Delete abnormal data
+    For i = 2 To 1 + I_cnt Step 1
+        For j = 2 To 1 + V_cnt Step 1
+            Select Case cat
+            Case 2
+                If Cells(i, j).Value <= 0.3 Then
+                    Cells(i, j) = ""
+                End If
+            End Select
+        Next
+    Next
+
+    'Create xlLineMarkers chart
+    ActiveSheet.Range(Cells(1, 1), Cells(1 + I_cnt, 1 + V_cnt)).Select
+    ActiveSheet.Shapes.AddChart.Select
+    ActiveChart.ChartType = xlLineMarkers
+    ActiveChart.SetSourceData Source := ActiveSheet.Range(Cells(1, 2), Cells(1 + I_cnt, 1 + V_cnt)), PlotBy := xlColumns
+    ActiveChart.Legend.Position = xlLegendPositionTop
+
+    With ActiveChart
+        .Axes(xlCategory, xlPrimary).HasTitle = True
+        .Axes(xlCategory, xlPrimary).AxisTitle.Characters.Text = "Curret Load (A)"
+        .Axes(xlCategory).HasMajorGridlines = True
+        .Axes(xlValue, xlPrimary).HasTitle = True
+        .Axes(xlValue).HasMajorGridlines = True
+        .FullSeriesCollection(1).XValues = Range(Cells(2, 1), Cells(1 + I_cnt, 1))
+        .SetElement (msoElementDataTableWithLegendKeys)
+
+        Select Case cat
+        Case 1
+            .Axes(xlValue, xlPrimary).AxisTitle.Characters.Text = "Voltage (V)"
+            .Axes(xlValue).MinimumScale = 0
+            .Axes(xlValue).MaximumScale = 18
+        Case 2
+            .Axes(xlValue, xlPrimary).AxisTitle.Characters.Text = "Efficiency (%)"
+            .Axes(xlValue).MinimumScale = 0.81
+            .Axes(xlValue).MaximumScale = 0.97
+        End Select
+    End With
+
+    'Set efficiency data to 0.00%
+    Range(Cells(2, 2), Cells(1 + I_cnt, 1 + V_cnt)).Select
+    Select Case cat
+    Case 1     
+        Selection.NumberFormat = "0.0"
+    Case 2
+        Selection.Style = "Percent"
+        Selection.NumberFormat = "0.00%"
+    End Select
+
+    'Modify chart size
+    With ActiveSheet.ChartObjects(1)
+        .Activate
+        Select Case cat
+        Case 1
+            .Height = 5000
+            .Width = 2500
+        Case 2
+            .Height = 1500
+            .Width = 1500
+        End Select
+    End With
+    
+    'Modify color of gridline
+    ActiveChart.Axes(xlCategory).MajorGridlines.Select
+    With Selection.Format.Line
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(217, 217, 217)
+        .Transparency = 0
+    End With
+    ActiveChart.Axes(xlValue).MajorGridlines.Select
+    With Selection.Format.Line
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(217, 217, 217)
+        .Transparency = 0
+    End With
+    ActiveChart.Axes(xlCategory).Select
+    With Selection.Format.Line
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(217, 217, 217)
+        .Transparency = 0
+    End With
+    ActiveChart.Axes(xlValue).Select
+    With Selection.Format.Line
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(217, 217, 217)
+        .Transparency = 0
+    End With
+    ActiveChart.DataTable.Select
+    With Selection.Format.Line
+        .Visible = msoTrue
+        .ForeColor.RGB = RGB(217, 217, 217)
+        .Transparency = 0
+    End With
+
+    'Modify all font
+    Select Case cat
+        Case 1
+            ActiveChart.Legend.Select
+            Selection.Format.TextFrame2.TextRange.font.Size = 25
+            ActiveChart.Axes(xlValue).Select
+            Selection.TickLabels.font.Size = 25
+            ActiveChart.Axes(xlCategory).Select
+            Selection.TickLabels.font.Size = 25
+            ActiveChart.Axes(xlValue).AxisTitle.Select
+            Selection.Format.TextFrame2.TextRange.font.Size = 25
+            ActiveChart.Axes(xlCategory).AxisTitle.Select
+            Selection.Format.TextFrame2.TextRange.font.Size = 25
+            ActiveChart.DataTable.Select
+            Selection.Format.TextFrame2.TextRange.font.Size = 25
+        Case 2
+            ActiveChart.Legend.Select
+            Selection.Format.TextFrame2.TextRange.font.Size = 18
+            ActiveChart.Axes(xlValue).Select
+            Selection.TickLabels.font.Size = 18
+            ActiveChart.Axes(xlCategory).Select
+            Selection.TickLabels.font.Size = 18
+            ActiveChart.Axes(xlValue).AxisTitle.Select
+            Selection.Format.TextFrame2.TextRange.font.Size = 18
+            ActiveChart.Axes(xlCategory).AxisTitle.Select
+            Selection.Format.TextFrame2.TextRange.font.Size = 18
+            ActiveChart.DataTable.Select
+            Selection.Format.TextFrame2.TextRange.font.Size = 18
+    End Select
+
+    'Delete chart border
+    ActiveSheet.Shapes(ActiveChart.Parent.Name).Line.Visible = msoFalse  
+End Sub
