@@ -300,6 +300,7 @@ Sub acdc_pivot_chart()
 
         ActiveSheet.Name = "ACDC"
         ActiveWindow.Zoom = 40
+        Msgbox "Test result has been generated successfully."
     Else
         Msgbox "Abort the pivot chart generating!"
     End If
